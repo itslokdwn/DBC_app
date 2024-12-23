@@ -27,14 +27,28 @@ export default function App() {
             content: [
               {
                 type: "text",
-                text: `Generate a unique restaurant review. This review will specifically mention ${serverName || 'our server'} as the server. Pick a random item off the menu and generate a comment about it. Also add a compliment about ${serverName || 'our server'}'s service. Make it sound casual and natural. Keep it short and sweet. Don't use quotation marks around food names and don't be too descriptive of the food.`
+                text: `Generate a unique restaurant review. 
+                This review will specifically mention ${serverName || 'our server'} as the server. 
+                Pick a random item off the menu and generate a comment about it. 
+                Also add a compliment about ${serverName || 'our server'}'s service.
+                 Make it sound casual and natural.
+                  Keep it short and sweet.
+                   Don't use quotation marks around food names and don't be too descriptive of the food.
+                    Use both images provided and mainly use the biscuit sandwhiches but mix it up a bit.
+                    When explaining the food, be less descriptive but be direct`
               },
               {
                 type: "image_url",
                 image_url: {
                   url: "https://images.squarespace-cdn.com/content/v1/6530997c1362a1794ebd2844/b3d542db-95e5-42e5-bbd2-a1cddc500b40/FatSullysNYPizza_Menu_Apr24.jpg?format=2500w"
                 }
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: "https://images.squarespace-cdn.com/content/v1/6530997c1362a1794ebd2844/b8424862-e05b-445d-a49e-2aeebd309ca8/DenverBiscuitCo_Menu.jpg?format=1000w"
               }
+            }
             ]
           }
         ],
