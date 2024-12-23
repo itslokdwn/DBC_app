@@ -1,6 +1,6 @@
 // App.js
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, ActivityIndicator, TextInput, Clipboard, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, ActivityIndicator, TextInput, Clipboard, Alert, Image } from 'react-native';
 import OpenAI from 'openai';
 
 export default function App() {
@@ -10,10 +10,14 @@ export default function App() {
 
   const generateReview = async () => {
     setLoading(true);
+    setReview(''); 
     try {
       const client = new OpenAI({
-        apiKey: 'enter key here!!!!!'
+        apiKey: '' 
       });
+
+      
+      const randomSeed = Math.random().toString(36).substring(7);
 
       const completion = await client.chat.completions.create({
         model: "gpt-4o-mini",
@@ -23,7 +27,7 @@ export default function App() {
             content: [
               {
                 type: "text",
-                text: `I want you to generate a review based on the attached image. This review will specifically mention ${serverName || 'our server'} as the server. Pick a random item off the menu and generate a comment about it. Also add a compliment about ${serverName || 'our server'}'s service. Make it sound casual and natural. Keep it short and sweet. Don't use quotation marks around food names and don't be too descriptive of the food.`
+                text: `Generate a unique restaurant review. This review will specifically mention ${serverName || 'our server'} as the server. Pick a random item off the menu and generate a comment about it. Also add a compliment about ${serverName || 'our server'}'s service. Make it sound casual and natural. Keep it short and sweet. Don't use quotation marks around food names and don't be too descriptive of the food.`
               },
               {
                 type: "image_url",
@@ -33,10 +37,12 @@ export default function App() {
               }
             ]
           }
-        ]
+        ],
+        temperature: 0.7, 
+        max_tokens: 100
       });
 
-      setReview(completion.choices[0].message.content);
+      setReview(completion.choices[0].message.content.trim());
     } catch (error) {
       setReview(`Error: ${error.message}`);
     } finally {
@@ -45,17 +51,25 @@ export default function App() {
   };
 
   const copyReview = () => {
-    Clipboard.setString(review);
-    Alert.alert(
-      'Copied!',
-      'The review has been copied to your clipboard.',
-      [{ text: 'OK', onPress: () => {} }]
-    );
+    if (review && review !== 'Your review will appear here') {
+      Clipboard.setString(review);
+      Alert.alert(
+        'Copied!',
+        'The review has been copied to your clipboard.',
+        [{ text: 'OK', onPress: () => {} }]
+      );
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Restaurant Review Generator</Text>
+      <Image 
+        source={{ uri: 'https://images.squarespace-cdn.com/content/v1/6530997c1362a1794ebd2844/b7cd0ced-80f9-4c3f-bed2-bccaa672d95e/AC_Logo_Primary_RED.png?format=1500w' }} 
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      
+      <Text style={styles.title}></Text>
       
       <TextInput
         style={styles.input}
@@ -82,8 +96,8 @@ export default function App() {
           </View>
         ) : (
           <>
-            <Text style={styles.reviewText}>{review}</Text>
-            {review !== 'Your review will appear here' && (
+            <Text style={styles.reviewText}>{review || 'Your review will appear here'}</Text>
+            {review && review !== 'Your review will appear here' && (
               <TouchableOpacity 
                 style={styles.copyButton} 
                 onPress={copyReview}
@@ -104,6 +118,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     paddingTop: 50,
+  },
+  logo: {
+    width: '100%', 
+    height: 100, 
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
